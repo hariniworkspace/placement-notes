@@ -89,10 +89,18 @@ const SystemDesignDetail = () => {
     })();
   }, [id]);
 
+  // ✅ Add block with UUID for React key
   const addBlock = () => {
     setNote({
       ...note,
-      blocks: [...note.blocks, { title: "", content: "" }],
+      blocks: [
+        ...note.blocks,
+        {
+          _id: crypto.randomUUID(),
+          title: "",
+          content: "",
+        },
+      ],
     });
   };
 
@@ -110,11 +118,20 @@ const SystemDesignDetail = () => {
     setNote({ ...note, blocks: filtered });
   };
 
+  // ✅ CLEAN BLOCKS BEFORE SAVE (fixes 500)
   const handleSave = async () => {
+    const cleanedBlocks = note.blocks.map(({ _id, ...rest }) => {
+      if (_id && _id.length === 24) {
+        return { _id, ...rest };
+      }
+      return rest;
+    });
+
     await updateSystemDesignNote(id, {
-      blocks: note.blocks,
+      blocks: cleanedBlocks,
       needsRevision: note.needsRevision,
     });
+
     toast.success("Note saved");
   };
 
@@ -174,7 +191,7 @@ const SystemDesignDetail = () => {
           </button>
         </div>
 
-        {/* CODER STYLE BOTTOM BAR */}
+        {/* Bottom Bar */}
         <div className="fixed bottom-0 left-64 right-0 z-50 border-t border-white/10 bg-[#0b0f1a]/95 px-10 py-4 flex justify-between items-center">
           <label className="flex items-center gap-2 cursor-pointer text-purple-400 font-medium">
             <input

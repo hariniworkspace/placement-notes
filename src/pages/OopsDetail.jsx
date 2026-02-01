@@ -1,6 +1,4 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { getSimilarOopsNotes } from "../services/oopsNoteService";
-
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -80,13 +78,6 @@ const ThoughtBlock = ({ block, updateBlock, deleteBlock }) => {
 const OopsDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [similar, setSimilar] = useState([]);
-
-useEffect(() => {
-  if (id) {
-    getSimilarOopsNotes(id).then(setSimilar);
-  }
-}, [id]);
 
   const [note, setNote] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -161,7 +152,6 @@ useEffect(() => {
             <div className="text-3xl font-semibold w-full border-b border-white/10 pb-2">
               {note.title}
             </div>
-            
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 pt-10">
@@ -184,7 +174,7 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* CODER STYLE BOTTOM BAR */}
+        {/* BOTTOM BAR */}
         <div className="fixed bottom-0 left-64 right-0 z-50 border-t border-white/10 bg-[#0b0f1a]/95 px-10 py-4 flex justify-between items-center">
           <label className="flex items-center gap-2 cursor-pointer text-purple-400 font-medium">
             <input
@@ -223,3 +213,4 @@ useEffect(() => {
 };
 
 export default OopsDetail;
+

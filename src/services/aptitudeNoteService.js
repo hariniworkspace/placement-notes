@@ -39,12 +39,14 @@ export const getAptitudeNotes = async () => {
 };
 
 /* ================= CREATE ================= */
-export const createAptitudeNote = async (title) => {
+
+export const createAptitudeNote = async (data) => {
   return await safeFetch(API, {
     method: "POST",
-    body: JSON.stringify({ title }),
+    body: JSON.stringify(data),
   });
 };
+
 
 /* ================= GET ONE ================= */
 export const getAptitudeNoteById = async (id) => {

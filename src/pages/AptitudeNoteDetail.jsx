@@ -91,12 +91,20 @@ const AptitudeNoteDetail = () => {
     })();
   }, [id]);
 
-  const addBlock = () => {
-    setNote({
-      ...note,
-      blocks: [...note.blocks, { title: "", content: "" }],
-    });
-  };
+ const addBlock = () => {
+  setNote({
+    ...note,
+    blocks: [
+      ...note.blocks,
+      {
+        _id: crypto.randomUUID(), // ✅ temporary key
+        title: "",
+        content: "",
+      },
+    ],
+  });
+};
+
 
   const updateBlock = (blockId, content, title) => {
     const updated = note.blocks.map((b) =>

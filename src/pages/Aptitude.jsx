@@ -20,7 +20,8 @@ const Aptitude = () => {
 
   const [completed, setCompleted] = useState({});
 
-  /* LOAD */
+  /* ================= LOAD ================= */
+
   const loadNotes = async () => {
     const data = await getAptitudeNotes();
     setNotes(data);
@@ -30,22 +31,25 @@ const Aptitude = () => {
     loadNotes();
   }, []);
 
-  /* CREATE */
+  /* ================= CREATE ================= */
+
   const handleCreate = async () => {
     if (!title.trim()) return;
 
-    const newNote = await createAptitudeNote(title);
+    const newNote = await createAptitudeNote({ title });
     setShowCreate(false);
     setTitle("");
     navigate(`/aptitude/${newNote._id}`);
   };
 
-  /* FILTER */
+  /* ================= FILTER ================= */
+
   const filteredNotes = notes.filter((n) =>
     n.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  /* REVISION LOGIC */
+  /* ================= REVISION LOGIC ================= */
+
   const revisionNotes = notes.filter((n) => n.needsRevision);
 
   useEffect(() => {
@@ -83,7 +87,7 @@ const Aptitude = () => {
         </div>
 
         <div className="flex flex-1 gap-8 px-10 py-8">
-          {/* LEFT */}
+          {/* LEFT COLUMN */}
           <div className="flex-1">
             <div className="sticky top-24 z-30 bg-[#0b0f1a] pb-6">
               <div className="flex items-center gap-4">
@@ -92,7 +96,7 @@ const Aptitude = () => {
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search aptitude notes..."
+                    placeholder="Search Aptitude notes..."
                     className="bg-transparent outline-none w-64 text-sm"
                   />
                 </div>
@@ -107,7 +111,7 @@ const Aptitude = () => {
             </div>
 
             {filteredNotes.length === 0 ? (
-              <p className="text-gray-400 mt-10">No aptitude notes yet.</p>
+              <p className="text-gray-400 mt-10">No Aptitude notes yet.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
                 {filteredNotes.map((n) => (
@@ -120,7 +124,7 @@ const Aptitude = () => {
                       {n.title}
                     </h3>
                     <p className="text-xs text-gray-400">
-                      Open question workspace →
+                      Open Aptitude workspace →
                     </p>
                   </div>
                 ))}
@@ -128,7 +132,7 @@ const Aptitude = () => {
             )}
           </div>
 
-          {/* REVISION DESK — FULL */}
+          {/* REVISION DESK */}
           <div className="w-[340px] sticky top-28 h-fit bg-white/5 border border-white/10 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-5">
               <BookOpen className="text-purple-400" size={18} />
@@ -196,17 +200,30 @@ const Aptitude = () => {
           </div>
         </div>
 
+        {/* CREATE BUTTON */}
+        <div className="fixed bottom-8 right-8 z-40">
+          <div className="absolute -inset-1 rounded-xl bg-purple-600/30 blur-lg"></div>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="fixed bottom-8 right-8 z-50 flex items-center gap-3 px-7 py-3.5 rounded-xl text-white font-semibold text-base bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 shadow-2xl border border-white/10 backdrop-blur-md hover:scale-105 transition-all"
+          >
+            <Plus size={18} />
+            New Note
+          </button>
+        </div>
+
+        {/* CREATE MODAL */}
         {showCreate && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-[#0f1422] border border-white/10 rounded-2xl w-[420px] p-6 shadow-xl">
               <h2 className="text-lg font-semibold mb-6">
-                Create System Design Note
+                Create Aptitude Note
               </h2>
 
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Eg: Design URL Shortener..."
+                placeholder="Eg: Time & Work, Probability..."
                 className="w-full bg-white/5 border border-white/10 px-4 py-2.5 rounded-lg mb-6"
               />
 

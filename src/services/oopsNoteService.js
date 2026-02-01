@@ -52,6 +52,4 @@ export const deleteOopsNote = async (id) => {
   await safeFetch(`${API}/${id}`, { method: "DELETE" });
 };
 
-export const getSimilarOopsNotes = async (id) => {
-  return await safeFetch(`${API}/similar/${id}`);
-};
+
