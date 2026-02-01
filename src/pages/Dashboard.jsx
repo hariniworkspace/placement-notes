@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Sidebar from "../components/Sidebar";
 import CoderNavbar from "../components/CoderNavbar";
 import { getCoderNotes } from "../services/coderNoteService";
@@ -35,7 +35,8 @@ const Dashboard = () => {
       const notesData = await getCoderNotes();
       const profileData = await getProfile();
 
-      setNotes(notesData);
+      // ✅ SAFE ARRAY HANDLING
+      setNotes(Array.isArray(notesData) ? notesData : notesData.notes || []);
       setUser(profileData);
     } catch {
       toast.error("Failed to load dashboard");
@@ -44,24 +45,64 @@ const Dashboard = () => {
     }
   };
 
-  /* =================== ANALYTICS =================== */
+  /* =================== ANALYTICS (MEMOIZED) =================== */
 
-  const total = notes.length;
-  const revisionPending = notes.filter((n) => n.needsRevision).length;
-  const revised = notes.filter((n) => n.isRevised).length;
+  const {
+    total,
+    revisionPending,
+    revised,
+    weakNotes,
+    strongNotes,
+    strengthData,
+    weakAreaList,
+    hasStrengthData,
+  } = useMemo(() => {
+    const total = notes.length;
 
-  const weakNotes = notes.filter(
-    (n) => n.needsRevision || (n.editCount || 0) >= 3
-  );
+    const revisionPending = notes.filter(
+      (n) => n.needsRevision === true
+    ).length;
 
-  const strongNotes = notes.filter(
-    (n) => !n.needsRevision && (n.editCount || 0) < 3
-  );
+    const revised = notes.filter((n) => n.isRevised === true).length;
 
-  const strengthData = [
-    { name: "Strong Concepts", value: strongNotes.length },
-    { name: "Weak Concepts", value: weakNotes.length },
-  ];
+    const weakNotes = notes.filter(
+      (n) => n.needsRevision === true || (n.editCount || 0) >= 3
+    );
+
+    const strongNotes = notes.filter(
+      (n) => n.needsRevision !== true && (n.editCount || 0) < 3
+    );
+
+    const strengthData = [
+      { name: "Strong Concepts", value: strongNotes.length },
+      { name: "Weak Concepts", value: weakNotes.length },
+    ];
+
+    const hasStrengthData = strengthData.some((d) => d.value > 0);
+
+    const weakAreaList = notes
+      .map((note) => {
+        const score =
+          (note.needsRevision ? 5 : 0) +
+          (note.difficulty === "Hard" ? 3 : 1) +
+          (note.editCount || 0) * 0.5;
+
+        return { ...note, weakScore: score };
+      })
+      .sort((a, b) => b.weakScore - a.weakScore)
+      .slice(0, 5);
+
+    return {
+      total,
+      revisionPending,
+      revised,
+      weakNotes,
+      strongNotes,
+      strengthData,
+      weakAreaList,
+      hasStrengthData,
+    };
+  }, [notes]);
 
   const STRENGTH_COLORS = ["#00bfff", "#ff2d55"];
 
@@ -75,22 +116,9 @@ const Dashboard = () => {
     { day: "Sun", solved: 1 },
   ];
 
-  const weakAreaList = notes
-    .map((note) => {
-      const score =
-        (note.needsRevision ? 5 : 0) +
-        (note.difficulty === "Hard" ? 3 : 1) +
-        (note.editCount || 0) * 0.5;
-
-      return { ...note, weakScore: score };
-    })
-    .sort((a, b) => b.weakScore - a.weakScore)
-    .slice(0, 5);
-
   if (loading) return <p className="p-8 text-white">Loading dashboard...</p>;
 
   return (
-    
     <div className="flex min-h-screen bg-[#0b0f1a] text-white">
       <Sidebar />
 
@@ -98,8 +126,7 @@ const Dashboard = () => {
         <CoderNavbar />
 
         <div className="p-10 space-y-10">
-
-          {/* ================= HEADER ================= */}
+          {/* HEADER */}
           <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-8 flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">
@@ -118,7 +145,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* ================= STATS ================= */}
+          {/* STATS */}
           <div className="grid md:grid-cols-4 gap-6">
             <SquareStat title="Total Problems" value={total} />
             <SquareStat title="Weak Concepts" value={weakNotes.length} />
@@ -126,9 +153,8 @@ const Dashboard = () => {
             <SquareStat title="Revision Pending" value={revisionPending} />
           </div>
 
-          {/* ================= GRAPHS ================= */}
+          {/* GRAPHS */}
           <div className="grid md:grid-cols-2 gap-8">
-
             {/* ACTIVITY */}
             <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6">
               <h2 className="font-semibold mb-4">Weekly Activity</h2>
@@ -152,33 +178,40 @@ const Dashboard = () => {
             <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6">
               <h2 className="font-semibold mb-4">Concept Strength</h2>
 
-              <ResponsiveContainer width="100%" height={260}>
-                <PieChart>
-                  <Pie
-                    data={strengthData}
-                    dataKey="value"
-                    outerRadius={100}
-                    innerRadius={55}
-                    paddingAngle={6}
-                  >
-                    {strengthData.map((_, index) => (
-                      <Cell
-                        key={index}
-                        fill={STRENGTH_COLORS[index]}
-                        style={{
-                          filter: "drop-shadow(0px 0px 10px rgba(0,0,0,0.5))",
-                        }}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+              {hasStrengthData ? (
+                <ResponsiveContainer width="100%" height={260}>
+                  <PieChart>
+                    <Pie
+                      data={strengthData}
+                      dataKey="value"
+                      outerRadius={100}
+                      innerRadius={55}
+                      paddingAngle={6}
+                    >
+                      {strengthData.map((_, index) => (
+                        <Cell
+                          key={index}
+                          fill={STRENGTH_COLORS[index]}
+                          style={{
+                            filter:
+                              "drop-shadow(0px 0px 10px rgba(0,0,0,0.5))",
+                          }}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <p className="text-gray-400 text-center mt-10">
+                  Not enough data yet 📊
+                </p>
+              )}
             </div>
           </div>
 
-          {/* ================= WEAK AREAS ================= */}
+          {/* WEAK AREAS */}
           <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-8">
             <h2 className="font-semibold mb-6 text-red-400">🔥 Weak Areas</h2>
 
@@ -197,7 +230,8 @@ const Dashboard = () => {
                         {index + 1}. {note.title}
                       </p>
                       <span className="text-xs text-gray-400">
-                        {note.difficulty} · {note.needsRevision ? "Needs Revision" : "Stable"}
+                        {note.difficulty} ·{" "}
+                        {note.needsRevision ? "Needs Revision" : "Stable"}
                       </span>
                     </div>
 
@@ -210,11 +244,9 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* ================= QUICK ACTIONS ================= */}
+          {/* QUICK ACTIONS */}
           <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-8">
-            <h2 className="text-xl font-semibold mb-6">
-              🚀 Quick Actions
-            </h2>
+            <h2 className="text-xl font-semibold mb-6">🚀 Quick Actions</h2>
 
             <div className="flex gap-4">
               <button
@@ -234,25 +266,20 @@ const Dashboard = () => {
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   );
 };
 
-/* ================= COMPONENT ================= */
-
-const SquareStat = ({ title, value }) => {
-  return (
-    <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6 text-center">
-      <p className="text-gray-400 text-sm">{title}</p>
-      <p className="text-3xl font-bold mt-2">{value}</p>
-      <div className="mt-3 inline-block px-4 py-1 rounded-full text-sm bg-white/10">
-        {title.split(" ")[0]}
-      </div>
+const SquareStat = ({ title, value }) => (
+  <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6 text-center">
+    <p className="text-gray-400 text-sm">{title}</p>
+    <p className="text-3xl font-bold mt-2">{value}</p>
+    <div className="mt-3 inline-block px-4 py-1 rounded-full text-sm bg-white/10">
+      {title.split(" ")[0]}
     </div>
-  );
-};
+  </div>
+);
 
 export default Dashboard;
