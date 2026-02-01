@@ -196,7 +196,38 @@ const Aptitude = () => {
           </div>
         </div>
 
-        {/* CREATE BUTTON + MODAL unchanged */}
+        {showCreate && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-[#0f1422] border border-white/10 rounded-2xl w-[420px] p-6 shadow-xl">
+              <h2 className="text-lg font-semibold mb-6">
+                Create System Design Note
+              </h2>
+
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Eg: Design URL Shortener..."
+                className="w-full bg-white/5 border border-white/10 px-4 py-2.5 rounded-lg mb-6"
+              />
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowCreate(false)}
+                  className="px-5 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={handleCreate}
+                  className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-pink-600/20 to-purple-600/20 border border-pink-500/20 shadow-lg"
+                >
+                  Create Note
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
