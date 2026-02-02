@@ -116,7 +116,8 @@ const Dashboard = () => {
     { day: "Sun", solved: 1 },
   ];
 
-  if (loading) return <p className="p-8 text-white">Loading dashboard...</p>;
+ 
+
 
   return (
     <div className="flex min-h-screen bg-[#0b0f1a] text-white">

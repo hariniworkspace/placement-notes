@@ -1,51 +1,54 @@
-const API = `${import.meta.env.VITE_API_URL}/api/dbms-notes`;
+import API from "./api";
 
-const getToken = () => localStorage.getItem("token");
-
-const safeFetch = async (url, options = {}) => {
-  const token = getToken();
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const res = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  if (!res.ok) return null;
-  return res.json();
-};
-
+/* ================= GET ALL ================= */
 export const getDbmsNotes = async () => {
-  const data = await safeFetch(API);
-  return Array.isArray(data) ? data : [];
+  try {
+    const { data } = await API.get("/api/dbms-notes");
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.error("Get DBMS Notes Error:", err);
+    return [];
+  }
 };
 
+/* ================= CREATE ================= */
 export const createDbmsNote = async (title) => {
-  return await safeFetch(API, {
-    method: "POST",
-    body: JSON.stringify({ title }),
-  });
+  try {
+    const { data } = await API.post("/api/dbms-notes", { title });
+    return data;
+  } catch (err) {
+    console.error("Create DBMS Note Error:", err);
+    return null;
+  }
 };
 
+/* ================= GET ONE ================= */
 export const getDbmsNoteById = async (id) => {
-  return await safeFetch(`${API}/${id}`);
+  try {
+    const { data } = await API.get(`/api/dbms-notes/${id}`);
+    return data;
+  } catch (err) {
+    console.error("Get DBMS Note By ID Error:", err);
+    return null;
+  }
 };
 
-export const updateDbmsNote = async (id, data) => {
-  return await safeFetch(`${API}/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
+/* ================= UPDATE ================= */
+export const updateDbmsNote = async (id, note) => {
+  try {
+    const { data } = await API.put(`/api/dbms-notes/${id}`, note);
+    return data;
+  } catch (err) {
+    console.error("Update DBMS Note Error:", err);
+    return null;
+  }
 };
 
+/* ================= DELETE ================= */
 export const deleteDbmsNote = async (id) => {
-  await safeFetch(`${API}/${id}`, { method: "DELETE" });
+  try {
+    await API.delete(`/api/dbms-notes/${id}`);
+  } catch (err) {
+    console.error("Delete DBMS Note Error:", err);
+  }
 };

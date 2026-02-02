@@ -1,15 +1,7 @@
-import axios from "axios";
+import API from "./api";
 
-const API = axios.create({
-  baseURL: "http://localhost:5000/api/users",
-});
-
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
-  if (token) req.headers.Authorization = `Bearer ${token}`;
-  return req;
-});
-
+/* ================= GET PROFILE ================= */
 export const getProfile = async () => {
-  return (await API.get("/me")).data;
+  const { data } = await API.get("/api/users/me");
+  return data;
 };

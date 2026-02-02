@@ -1,55 +1,54 @@
-const API = `${import.meta.env.VITE_API_URL}/api/oops-notes`;
+import API from "./api";
 
-const getToken = () => localStorage.getItem("token");
-
-const safeFetch = async (url, options = {}) => {
-  const token = getToken();
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const res = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  if (res.status === 401) return null;
-  if (!res.ok) return null;
-
-  return res.json();
-};
-
+/* ================= GET ALL ================= */
 export const getOopsNotes = async () => {
-  const data = await safeFetch(API);
-  return Array.isArray(data) ? data : [];
+  try {
+    const { data } = await API.get("/api/oops-notes");
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 };
 
+/* ================= CREATE ================= */
 export const createOopsNote = async (title) => {
-  return await safeFetch(API, {
-    method: "POST",
-    body: JSON.stringify({ title }),
-  });
+  try {
+    const { data } = await API.post("/api/oops-notes", { title });
+    return data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 };
 
+/* ================= GET ONE ================= */
 export const getOopsNoteById = async (id) => {
-  return await safeFetch(`${API}/${id}`);
+  try {
+    const { data } = await API.get(`/api/oops-notes/${id}`);
+    return data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 };
 
-export const updateOopsNote = async (id, data) => {
-  return await safeFetch(`${API}/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
+/* ================= UPDATE ================= */
+export const updateOopsNote = async (id, note) => {
+  try {
+    const { data } = await API.put(`/api/oops-notes/${id}`, note);
+    return data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 };
 
+/* ================= DELETE ================= */
 export const deleteOopsNote = async (id) => {
-  await safeFetch(`${API}/${id}`, { method: "DELETE" });
+  try {
+    await API.delete(`/api/oops-notes/${id}`);
+  } catch (err) {
+    console.error(err);
+  }
 };
-
-

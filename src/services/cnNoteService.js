@@ -1,51 +1,54 @@
-const API = `${import.meta.env.VITE_API_URL}/api/cn-notes`;
+import API from "./api";
 
-const getToken = () => localStorage.getItem("token");
-
-const safeFetch = async (url, options = {}) => {
-  const token = getToken();
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const res = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  if (!res.ok) return null;
-  return res.json();
-};
-
+/* ================= GET ALL ================= */
 export const getCnNotes = async () => {
-  const data = await safeFetch(API);
-  return Array.isArray(data) ? data : [];
+  try {
+    const { data } = await API.get("/api/cn-notes");
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.error("Get CN Notes Error:", err);
+    return [];
+  }
 };
 
+/* ================= CREATE ================= */
 export const createCnNote = async (title) => {
-  return await safeFetch(API, {
-    method: "POST",
-    body: JSON.stringify({ title }),
-  });
+  try {
+    const { data } = await API.post("/api/cn-notes", { title });
+    return data;
+  } catch (err) {
+    console.error("Create CN Note Error:", err);
+    return null;
+  }
 };
 
+/* ================= GET ONE ================= */
 export const getCnNoteById = async (id) => {
-  return await safeFetch(`${API}/${id}`);
+  try {
+    const { data } = await API.get(`/api/cn-notes/${id}`);
+    return data;
+  } catch (err) {
+    console.error("Get CN Note By ID Error:", err);
+    return null;
+  }
 };
 
-export const updateCnNote = async (id, data) => {
-  return await safeFetch(`${API}/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
+/* ================= UPDATE ================= */
+export const updateCnNote = async (id, note) => {
+  try {
+    const { data } = await API.put(`/api/cn-notes/${id}`, note);
+    return data;
+  } catch (err) {
+    console.error("Update CN Note Error:", err);
+    return null;
+  }
 };
 
+/* ================= DELETE ================= */
 export const deleteCnNote = async (id) => {
-  await safeFetch(`${API}/${id}`, { method: "DELETE" });
+  try {
+    await API.delete(`/api/cn-notes/${id}`);
+  } catch (err) {
+    console.error("Delete CN Note Error:", err);
+  }
 };

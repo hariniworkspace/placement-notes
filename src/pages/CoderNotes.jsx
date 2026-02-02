@@ -191,7 +191,7 @@ const CoderNotes = () => {
 
   /* ================= LOADING PLACEHOLDER ================= */
 
-  if (loadingNotes) return <PageSkeleton />;
+ 
 
   /* ================= UI ================= */
 
