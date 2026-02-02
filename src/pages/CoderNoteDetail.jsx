@@ -88,6 +88,7 @@ const DeleteDialog = ({ onCancel, onConfirm }) => {
 
 
 /* 🖼 Image Slot — FIXED */
+
 const ImageSlot = ({ images = [], setImages }) => {
   const fileRef = useRef();
 
@@ -98,7 +99,7 @@ const ImageSlot = ({ images = [], setImages }) => {
   const token = localStorage.getItem("token");
 
   const res = await fetch(
-    "http://localhost:5000/api/codernotes/upload-image",
+    `${import.meta.env.VITE_API_URL}/api/codernotes/upload-image`,
     {
       method: "POST",
       headers: {
@@ -109,8 +110,11 @@ const ImageSlot = ({ images = [], setImages }) => {
   );
 
   const data = await res.json();
-  return `http://localhost:5000${data.imageUrl}`;
+
+  
+  return `${import.meta.env.VITE_API_URL}${data.imageUrl}`;
 };
+
 
 
   const handleFiles = async (files) => {

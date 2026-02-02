@@ -116,7 +116,51 @@ const Dashboard = () => {
     { day: "Sun", solved: 1 },
   ];
 
- 
+ const DashboardLoader = () => {
+  return (
+    <div className="flex min-h-screen bg-[#0b0f1a] text-white">
+      
+      <div className="w-64 border-r border-white/10 bg-white/5 backdrop-blur-xl" />
+
+      <div className="flex-1 ml-58 p-10">
+        {/* Top greeting shimmer */}
+        <div className="h-24 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden mb-10">
+          <div className="absolute inset-0 shimmer" />
+        </div>
+
+        {/* Stat cards shimmer */}
+        <div className="grid grid-cols-4 gap-6 mb-10">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="h-28 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 shimmer" />
+            </div>
+          ))}
+        </div>
+
+        {/* Charts shimmer */}
+        <div className="grid grid-cols-2 gap-8 mb-10">
+          {[...Array(2)].map((_, i) => (
+            <div
+              key={i}
+              className="h-64 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 shimmer" />
+            </div>
+          ))}
+        </div>
+
+        {/* Weak list shimmer */}
+        <div className="h-56 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden">
+          <div className="absolute inset-0 shimmer" />
+        </div>
+      </div>
+    </div>
+  );
+};
+if (loading) return <DashboardLoader />;
 
 
   return (
