@@ -1,16 +1,122 @@
-# React + Vite
+Placement Notes – DSA & Interview Preparation Platform
+Overview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Placement Notes is a full-stack web application designed to help students prepare systematically for technical placements. The platform enables structured note-taking for Data Structures and Algorithms (DSA), tracking important coding problems, and organizing interview preparation content.
 
-Currently, two official plugins are available:
+This project is being developed as a scalable placement preparation system, starting with DSA and expanding to Aptitude, Core CS subjects, and company-specific preparation.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Problem Statement
 
-## React Compiler
+Most students prepare for placements using scattered resources such as notebooks, screenshots, random links, and unstructured documents. This leads to:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Poor revision efficiency
 
-## Expanding the ESLint configuration
+Lack of progress tracking
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+No centralized preparation system
+
+Difficulty in company-specific targeting
+
+Placement Notes solves this by providing a structured and searchable preparation platform.
+
+Features
+Implemented
+
+User Authentication (Register / Login)
+
+Create, Read, Update, Delete (CRUD) operations for DSA notes
+
+Topic-wise organization of notes
+
+Timestamp tracking
+
+RESTful API-based architecture
+
+Secure backend routing
+
+Planned Enhancements
+
+Progress tracking dashboard
+
+Tag-based filtering and search
+
+Important problem bookmarking
+
+Company-wise preparation tracker
+
+Aptitude section
+
+Core CS subjects section (OS, DBMS, CN, OOPS)
+
+AI-based resume analyzer integration
+
+Tech Stack
+Frontend
+
+React.js
+
+Tailwind CSS
+
+Axios
+
+React Router
+
+Backend
+
+Node.js
+
+Express.js
+
+MongoDB
+
+Mongoose
+
+Tools & Utilities
+
+Postman (API testing)
+
+Git & GitHub
+
+Architecture
+
+The application follows a standard MERN architecture:
+
+React handles the frontend UI and routing.
+
+Express and Node.js manage backend APIs.
+
+MongoDB stores user data and notes.
+
+REST APIs connect the frontend and backend.
+
+The backend is modularized using:
+
+Models
+
+Controllers
+
+Routes
+
+Use Case
+
+This platform is designed for:
+
+Students preparing for on-campus and off-campus placements
+
+Candidates targeting service-based and product-based companies
+
+Structured DSA revision and interview preparation
+
+Future Scope
+
+The long-term goal is to evolve this project into a complete IT placement preparation ecosystem covering:
+
+DSA
+
+Aptitude
+
+Core CS fundamentals
+
+Interview experience logs
+
+Company-specific preparation tracking
